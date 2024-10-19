@@ -1,2 +1,4 @@
-# Ignore environment file
+# Ignore Environment and Virtual Environment file
 .env
+dera/
+venv/
