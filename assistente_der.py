@@ -34,12 +34,13 @@ def create_file_ids_list():
     return []
 
 def create_assistant(file_ids_list):
-    assistant = client.beta.assistants.create(
-        name = "Der",
+    der_gpt4 = client.beta.assistants.create(
+        name = "Der Agropesca",
+        description = "Assistant that simulates the person Fernando Rheder Batista Nascimento, also known as Der Agropesca.",
         instructions = f"""
             {fernando}.
             Você não deve responder como se fosse uam pessoa estranha, mas sim um amigo!
             Além disso, acesse os arquivos associados a você e a thread para responder as perguntas para ser mais assertivo.
         """,
-        model = select_model()
+        model = "gpt-4"
     )

@@ -33,51 +33,26 @@ personas = {
 }
 
 def select_persona(user_message):
-    assistant_prompt = """
+    system_prompt = """
     Faça uma análise da mensagem informada abaixo para identificar se o sentimento é: alegre ou triste. Retorne apenas
     um dos dois tipos de sentimentos informados como resposta.
     """
 
-    schizo_der = client.beta.assistants.create(
-        name = "Der's Schizophrenia",
-        description = "Assistant that simulates Der's schizophrenia.",
-        instructions = "You're an assistant that help choosing Fernando mood/persona",
-        model = select_model(assistant_prompt + user_message)
-    )
-    schizo_thread = client.beta.threads.create()
-    messages = [
-        {
-            "thread_id": schizo_thread.id,
-            "role": "assistant",
-            "content": assistant_prompt
-        },
-        {
-            "thread_id": schizo_thread.id,
-            "role": "user",
-            "content": user_message
-        }
-    ]
-    message = client.beta.threads.messages.create(
-        thread_id = messages[0]["thread_id"],
-        role = messages[0]["role"],
-        content = messages[0]["content"]
-    )
-    message = client.beta.threads.messages.create(
-        thread_id = messages[1]["thread_id"],
-        role = messages[1]["role"],
-        content = messages[1]["content"]
-    )
-    schizo_thought = client.beta.threads.runs.create_and_poll(
-        thread_id=schizo_thread.id,
-        assistant_id=schizo_der.id
+    response = client.chat.completions.create(
+        model = select_model(system_prompt + user_message),
+        messages = [
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": user_message
+            }
+        ],
+        temperature = 1
     )
 
-    while schizo_thought.status != STATUS_COMPLETED:
-        run = client.beta.threads.runs.retrieve(
-            thread_id=schizo_thread.id,
-            run_id=schizo_thought.id
-        )
+    return response.choices[0].message.content.lower()
 
-    mood = list(client.beta.threads.messages.list(thread_id = schizo_thread.id).data)
-
-    return mood[0]
+select_persona("Eu estou muito feliz com o resultado do jogo de ontem!")
