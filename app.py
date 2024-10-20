@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, Response
+from flask_cors import CORS
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
@@ -11,6 +12,8 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
+
+CORS(app, resources = {r"/chat": {"origins": "https://dera-xi.vercel.app"}})
 
 STATUS_COMPLETED = "completed"
 STATUS_REQUIRES_ACTION = "requires_action"
