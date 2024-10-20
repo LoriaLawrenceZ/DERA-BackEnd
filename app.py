@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 from flask_cors import CORS
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -45,7 +45,7 @@ def chat():
     user_prompt = request.json["msg"]
     response = der(user_prompt)
     der_response = response.content[0].text.value
-    return der_response
+    return jsonify({"response": der_response})
 
 if __name__ == "__main__":
     app.run(debug = True)
