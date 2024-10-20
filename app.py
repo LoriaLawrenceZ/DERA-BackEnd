@@ -50,7 +50,7 @@ def der(user_prompt):
             client.beta.threads.messages.create(
                 thread_id = thread_id,
                 role = "user",
-                content = ""
+                content = user_prompt["text"]
             )
 
             run = client.beta.threads.runs.create(
@@ -98,7 +98,7 @@ def der(user_prompt):
 def chat():
     user_prompt = request.json["msg"]
     response = der(user_prompt)
-    der_response = response["content"]
+    der_response = response["content"][0].text.value
     return jsonify({"response": der_response})
 
 @app.route("/")

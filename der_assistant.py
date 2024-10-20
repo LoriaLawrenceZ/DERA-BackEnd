@@ -18,7 +18,7 @@ model = "gpt-4"
 def get_json():
     filename = "assistants.json"
 
-    if not os.path.exists("dados/"+filename):
+    if not os.path.exists(filename):
         thread = create_thread()
         file_ids_list = create_file_ids_list()
         assistant_id = create_assistant(file_ids_list)
@@ -48,7 +48,7 @@ def create_file_ids_list():
     file_ids_list = []
 
 def create_assistant(file_ids_list):
-    der_gpt4 = client.beta.assistants.create(
+    der_gpt35turbo = client.beta.assistants.create(
         name = "Der Agropesca",
         description = "Assistant that simulates the person Fernando Rheder Batista Nascimento, also known as Der Agropesca.",
         instructions = f"""
@@ -59,3 +59,5 @@ def create_assistant(file_ids_list):
         model = "gpt-3.5-turbo",
         tools = my_tools
     )
+
+    return der_gpt35turbo.id

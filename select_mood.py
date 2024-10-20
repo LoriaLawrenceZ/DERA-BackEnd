@@ -35,11 +35,12 @@ personas = {
 def select_mood(user_message):
     system_prompt = """
     Faça uma análise da mensagem informada abaixo para identificar se o sentimento é: alegre ou triste.
-    Retorne apenas um dos dois tipos de sentimentos informados como resposta.
+    Caso não seja possível se identificar o sentimento na mensagem informada, tome como verdade o 'alegre'
+    Retorne apenas as possibilidas informados como resposta.
     """
 
     response = client.chat.completions.create(
-        model = select_model(system_prompt + user_message),
+        model = select_model(system_prompt + user_message["text"]),
         messages = [
             {
                 "role": "system",
@@ -47,7 +48,7 @@ def select_mood(user_message):
             },
             {
                 "role": "user",
-                "content": user_message
+                "content": user_message["text"]
             }
         ],
         temperature = 1
