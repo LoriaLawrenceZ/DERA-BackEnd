@@ -16,6 +16,7 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 CORS(app, resources = {r"/chat": {"origins": "https://dera-xi.vercel.app"}})
 
@@ -101,6 +102,10 @@ def chat():
     response = der(user_prompt)
     der_response = response.content[0].text.value
     return jsonify({"response": der_response})
+
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(debug = True)
