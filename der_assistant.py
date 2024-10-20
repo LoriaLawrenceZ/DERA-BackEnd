@@ -1,11 +1,13 @@
 import json
+from logging import exception
 
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 from time import sleep
 
-from selecionar_persona import fernando
+from der_tools import my_tools
+from select_mood import fernando
 from token_counter import select_model
 
 load_dotenv()
@@ -27,11 +29,23 @@ def get_json():
             "file_ids": file_ids_list
         }
 
+        with open(filename, "w", encoding = "utf-8") as file:
+            json.dump(data, file, ensure_ascii = False, ident = 4)
+
+        print ("Arquivo 'assistants.json' criado com sucesso!")
+
+    try:
+        with open(filename, "r", encoding = "utf-8") as file:
+            data = json.load(file)
+            return data
+    except FileNotFoundError as fnfe:
+        print("Arquivo 'assistants.json' não encontrado!")
+
 def create_thread():
     return client.beta.threads.create()
 
 def create_file_ids_list():
-    return []
+    file_ids_list = []
 
 def create_assistant(file_ids_list):
     der_gpt4 = client.beta.assistants.create(
@@ -42,5 +56,6 @@ def create_assistant(file_ids_list):
             Você não deve responder como se fosse uam pessoa estranha, mas sim um amigo!
             Além disso, acesse os arquivos associados a você e a thread para responder as perguntas para ser mais assertivo.
         """,
-        model = "gpt-4"
+        model = "gpt-4",
+        tools = my_tools
     )

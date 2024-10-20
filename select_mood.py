@@ -32,10 +32,10 @@ personas = {
     """,
 }
 
-def select_persona(user_message):
+def select_mood(user_message):
     system_prompt = """
-    Faça uma análise da mensagem informada abaixo para identificar se o sentimento é: alegre ou triste. Retorne apenas
-    um dos dois tipos de sentimentos informados como resposta.
+    Faça uma análise da mensagem informada abaixo para identificar se o sentimento é: alegre ou triste.
+    Retorne apenas um dos dois tipos de sentimentos informados como resposta.
     """
 
     response = client.chat.completions.create(
@@ -54,5 +54,3 @@ def select_persona(user_message):
     )
 
     return response.choices[0].message.content.lower()
-
-select_persona("Eu estou muito feliz com o resultado do jogo de ontem!")
