@@ -18,7 +18,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
-CORS(app, resources = {r"/chat": {"origins": "https://dera-xi.vercel.app"}})
+CORS(app, resources = {r"/chat": {"origins": "*"}})
 
 der_assistant = get_json()
 assistant_id = der_assistant["assistant_id"]
