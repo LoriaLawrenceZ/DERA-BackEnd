@@ -45,14 +45,12 @@ def der(user_prompt):
                     
                     # Humor / Temperamento
                     {mood}
-                """,
-                file_ids = file_ids
+                """
             )
             client.beta.threads.messages.create(
                 thread_id = thread_id,
                 role = "user",
-                content = "",
-                file_ids = file_ids
+                content = ""
             )
 
             run = client.beta.threads.runs.create(
@@ -85,14 +83,14 @@ def der(user_prompt):
                         tool_outputs = triggered_tools_responses
                     )
 
-            history = list(client.beta.threads.messages.list(thread_id = thread_id).data)
+            history = client.beta.threads.messages.list(thread_id = thread_id).data
             response = history[0]
-            return response
+            return {"content": response.content}
 
         except Exception as e:
             counter += 1
             if counter >= maximum_tries:
-                return "Erro no GPT: %s" % e
+                return {"content": "Erro no GPT: %s" % e}
             print("Erro de comunicação com a OpenAI:", e)
             sleep(1)
 
@@ -100,7 +98,7 @@ def der(user_prompt):
 def chat():
     user_prompt = request.json["msg"]
     response = der(user_prompt)
-    der_response = response.content[0].text.value
+    der_response = response["content"]
     return jsonify({"response": der_response})
 
 @app.route("/")
