@@ -19,18 +19,18 @@ def get_json():
     filename = "assistants.json"
 
     if not os.path.exists("dados/"+filename):
-        thread_id = create_thread()
+        thread = create_thread()
         file_ids_list = create_file_ids_list()
         assistant_id = create_assistant(file_ids_list)
 
         data = {
             "assistant_id": assistant_id,
-            "thread_id": thread_id,
+            "thread_id": thread.id,
             "file_ids": file_ids_list
         }
 
         with open(filename, "w", encoding = "utf-8") as file:
-            json.dump(data, file, ensure_ascii = False, ident = 4)
+            json.dump(data, file, ensure_ascii = False, indent = 4)
 
         print ("Arquivo 'assistants.json' criado com sucesso!")
 
@@ -56,6 +56,6 @@ def create_assistant(file_ids_list):
             Você não deve responder como se fosse uam pessoa estranha, mas sim um amigo!
             Além disso, acesse os arquivos associados a você e a thread para responder as perguntas para ser mais assertivo.
         """,
-        model = "gpt-4",
+        model = "gpt-3.5-turbo",
         tools = my_tools
     )
