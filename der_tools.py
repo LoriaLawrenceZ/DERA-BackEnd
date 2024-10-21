@@ -13,7 +13,7 @@ my_tools = [
     {
         "type": "function",
         "function": {
-            "name": "procurar_verdades",
+            "name": "is_it_true",
             "description": "Valide um código promocional com base nas diretrizes de Descontos e Promoções da empresa",
             "parameters": {
                 "type": "object",

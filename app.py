@@ -1,7 +1,7 @@
 import json
 
 from flask import Flask, render_template, request, Response, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
@@ -17,13 +17,12 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
-
 CORS(app, resources = {r"/chat": {"origins": "*"}})
 
-der_assistant = get_json()
-assistant_id = der_assistant["assistant_id"]
-thread_id = der_assistant["thread_id"]
-file_ids = der_assistant["file_ids"]
+der_assistant_info = get_json()
+assistant_id = der_assistant_info["assistant_id"]
+thread_id = der_assistant_info["thread_id"]
+file_ids = der_assistant_info["file_ids"]
 
 STATUS_COMPLETED = "completed"
 STATUS_REQUIRES_ACTION = "requires_action"
@@ -77,7 +76,7 @@ def der(user_prompt):
 
                         triggered_tools_responses.append(tool_response)
 
-                    run = client.beta.threads.runs.submit_tool_outputs(
+                    client.beta.threads.runs.submit_tool_outputs(
                         thread_id = thread_id,
                         run_id = run.id,
                         tool_outputs = triggered_tools_responses
@@ -92,9 +91,14 @@ def der(user_prompt):
             if counter >= maximum_tries:
                 return {"content": "Erro no GPT: %s" % e}
             print("Erro de comunicação com a OpenAI:", e)
+            run = client.beta.threads.runs.cancel(
+                thread_id = thread_id,
+                run_id = run.id
+            )
             sleep(1)
 
 @app.route("/chat", methods=["POST"])
+@cross_origin()
 def chat():
     user_prompt = request.json["msg"]
     response = der(user_prompt)

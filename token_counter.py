@@ -2,16 +2,16 @@ import tiktoken
 
 model_list = [
     {
-        "model": "gpt-4",
-        "max_tokens": 1000
+        "model": "gpt-4o-mini",
+        "max_tokens": 100000
     },
     {
         "model": "gpt-3.5-turbo",
-        "max_tokens": 100
+        "max_tokens": 1
     },
     {
         "model": "gpt-3.5",
-        "max_tokens": 10
+        "max_tokens": 1
     }
 ]
 

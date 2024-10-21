@@ -1,5 +1,8 @@
+from email.policy import strict
+
 from openai import OpenAI
 from dotenv import load_dotenv
+from pydantic import BaseModel
 import os
 from time import sleep
 
@@ -29,7 +32,7 @@ personas = {
         
         Tendo conhecimento destas características, você deverá responder sempre de maneira triste, sempre enfatizando os
         aspectos negativos e olhando de maneira pessimista.
-    """,
+    """
 }
 
 def select_mood(user_message):
@@ -39,7 +42,7 @@ def select_mood(user_message):
     Retorne apenas as possibilidas informados como resposta.
     """
 
-    response = client.chat.completions.create(
+    response = client.beta.chat.completions.parse(
         model = select_model(system_prompt + user_message["text"]),
         messages = [
             {
@@ -51,7 +54,31 @@ def select_mood(user_message):
                 "content": user_message["text"]
             }
         ],
-        temperature = 1
+        temperature = 1,
+        response_format = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "mood_response",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "mood": {
+                            "type": "string",
+                            "enum": ["alegre", "triste"]
+                        }
+                    },
+                    "required": ["mood"],
+                    "additionalProperties": False
+                },
+                "strict": True
+            }
+        }
     )
 
-    return response.choices[0].message.content.lower()
+    if response.choices[0].message.parsed is None:
+        return "alegre"
+    else:
+        return response.choices[0].message.parsed
+
+class MoodResponse(BaseModel):
+    mood: str

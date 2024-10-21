@@ -19,9 +19,18 @@ def get_json():
     filename = "assistants.json"
 
     if not os.path.exists(filename):
-        thread = create_thread()
+        assistants = client.beta.assistants.list(
+            order = "desc"
+        )
+
         file_ids_list = create_file_ids_list()
-        assistant_id = create_assistant(file_ids_list)
+
+        if len(assistants.data) > 0:
+            assistant_id = assistants.data[0].id
+            thread = client.beta.threads.create()
+        else:
+            assistant_id = create_assistant(file_ids_list)
+            thread = create_thread()
 
         data = {
             "assistant_id": assistant_id,
